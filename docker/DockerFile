@@ -1,0 +1,17 @@
+FROM php:7.3-apache
+
+#install apache2
+
+
+#Install git
+RUN apt-get update \
+    apt-get install -y git
+
+
+RUN a2enmod rewrite
+
+COPY . /var/www/html/
+
+ADD default.conf /etc/apache2/site-availables/000-default.conf
+
+Expose 80 8089
