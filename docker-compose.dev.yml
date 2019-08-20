@@ -5,8 +5,8 @@ services:
     build: 
       context: ./docker
     ports:
-      - '8081: 80'
-      - '8082: 8089'
+      - '8080:80'
+      - '8082:8089'
     links:
       - db
     volumes:
@@ -21,5 +21,4 @@ services:
       MYSQL_PASSWORD: test
       MYSQL_ROOT_PASSWORD: test
     volumes:
-      - ./mysql:/var/lib/mysql/
-	
+      - .~/mysql:/var/lib/mysql/

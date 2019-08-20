@@ -1,17 +1,33 @@
 FROM php:7.3-apache
 
-#install apache2
+MAINTAINER Mahdi Gueffaz
 
-
-#Install git
+#intall vim
 RUN apt-get update \
-    apt-get install -y git
+    && apt-get install -y \
+        nmap \
+        vim
 
+RUN a2enmod proxy && \
+  a2enmod proxy_http && \
+  a2enmod proxy_ajp && \
+  a2enmod rewrite && \
+  a2enmod deflate && \
+  a2enmod headers && \
+  a2enmod proxy_balancer && \
+  a2enmod proxy_connect && \
+  a2enmod ssl && \
+  a2enmod cache && \
+  a2enmod expires
 
-RUN a2enmod rewrite
+# Run apache on port 8080 instead of 80 due. On linux, ports under 1024 require admin privileges and we run apache as www-data.
+#RUN sed -i 's/Listen 80/Listen 8080/g' /etc/apache2/ports.conf
 
-COPY . /var/www/html/
+COPY . /var/www/
+RUN chown -R www-data:www-data .
 
 ADD default.conf /etc/apache2/site-availables/000-default.conf
 
 Expose 80 8089
+
+WORKDIR /var/www/
