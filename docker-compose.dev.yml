@@ -10,7 +10,7 @@ services:
     links:
       - db
     volumes:
-      - .:/var/www/
+      - .:/var/www/:rw
   db:
     image: mysql:8
     ports:
@@ -21,4 +21,7 @@ services:
       MYSQL_PASSWORD: test
       MYSQL_ROOT_PASSWORD: test
     volumes:
-      - .~/mysql:/var/lib/mysql/
+      - mysqldb_volume:/var/lib/mysql/
+
+volumes:
+  mysqldb_volume:
