@@ -1,27 +1,27 @@
-FROM php:7.3-apache
+FROM ubuntu:latest
 
 MAINTAINER Mahdi Gueffaz
 
-#intall vim
-RUN apt-get update \
-    && apt-get install -y \
-        nmap \
-        vim
 
-RUN a2enmod proxy && \
-  a2enmod proxy_http && \
-  a2enmod proxy_ajp && \
-  a2enmod rewrite && \
-  a2enmod deflate && \
-  a2enmod headers && \
-  a2enmod proxy_balancer && \
-  a2enmod proxy_connect && \
-  a2enmod ssl && \
-  a2enmod cache && \
-  a2enmod expires
+# Install apache, PHP, and supplimentary programs. openssh-server, curl, and lynx-cur are for debugging the container.
+RUN apt-get update && apt-get -y upgrade && DEBIAN_FRONTEND=noninteractive apt-get -y install \
+    apache2 php7.0 php7.0-mysql libapache2-mod-php7.0 curl lynx-cur
 
-# Run apache on port 8080 instead of 80 due. On linux, ports under 1024 require admin privileges and we run apache as www-data.
-#RUN sed -i 's/Listen 80/Listen 8080/g' /etc/apache2/ports.conf
+# Enable apache mods.
+RUN a2enmod php7.0
+RUN a2enmod rewrite
+
+# Update the PHP.ini file, enable <? ?> tags and quieten logging.
+RUN sed -i "s/short_open_tag = Off/short_open_tag = On/" /etc/php/7.0/apache2/php.ini
+RUN sed -i "s/error_reporting = .*$/error_reporting = E_ERROR | E_WARNING | E_PARSE/" /etc/php/7.0/apache2/php.ini
+
+# Manually set up the apache environment variables
+ENV APACHE_RUN_USER www-data
+ENV APACHE_RUN_GROUP www-data
+ENV APACHE_LOG_DIR /var/log/apache2
+ENV APACHE_LOCK_DIR /var/lock/apache2
+ENV APACHE_PID_FILE /var/run/apache2.pid
+
 
 COPY . /var/www/
 RUN chown -R www-data:www-data .
@@ -31,3 +31,6 @@ ADD default.conf /etc/apache2/site-availables/000-default.conf
 Expose 80 8089
 
 WORKDIR /var/www/
+
+# By default start up apache in the foreground, override with /bin/bash for interative.
+CMD /usr/sbin/apache2ctl -D FOREGROUND
