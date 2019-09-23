@@ -100,13 +100,13 @@ final class Versions
   'willdurand/negotiation' => 'v2.3.1@03436ededa67c6e83b9b12defac15384cb399dc9',
   'zendframework/zend-code' => '3.3.1@c21db169075c6ec4b342149f446e7b7b724f95eb',
   'zendframework/zend-eventmanager' => '3.2.1@a5e2583a211f73604691586b8406ff7296a946dd',
-  'paragonie/random_compat' => '2.*@',
-  'symfony/polyfill-ctype' => '*@',
-  'symfony/polyfill-iconv' => '*@',
-  'symfony/polyfill-php71' => '*@',
-  'symfony/polyfill-php70' => '*@',
-  'symfony/polyfill-php56' => '*@',
-  '__root__' => 'No version set (parsed as 1.0.0)@',
+  'paragonie/random_compat' => '2.*@5cedcca854b12769b2f8bb1b88a2bd6ebd2ea040',
+  'symfony/polyfill-ctype' => '*@5cedcca854b12769b2f8bb1b88a2bd6ebd2ea040',
+  'symfony/polyfill-iconv' => '*@5cedcca854b12769b2f8bb1b88a2bd6ebd2ea040',
+  'symfony/polyfill-php71' => '*@5cedcca854b12769b2f8bb1b88a2bd6ebd2ea040',
+  'symfony/polyfill-php70' => '*@5cedcca854b12769b2f8bb1b88a2bd6ebd2ea040',
+  'symfony/polyfill-php56' => '*@5cedcca854b12769b2f8bb1b88a2bd6ebd2ea040',
+  '__root__' => 'dev-develop@5cedcca854b12769b2f8bb1b88a2bd6ebd2ea040',
 );
 
     private function __construct()
