@@ -15,6 +15,7 @@ services:
     image: mysql:8
     ports:
       - '8889:3306'
+    restart: always
     environment:
       MYSQL_DATABASE: api
       MYSQL_USER: root
