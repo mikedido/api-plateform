@@ -1,14 +1,15 @@
 # main.py
 
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, session, redirect, url_for
 from flask_login import login_required, current_user
 
 main = Blueprint('main', __name__)
 
 @main.route('/')
-@login_required
 def index():
-    return render_template('index.html')
+    if 'loggedin' in session:
+        return render_template('index.html')
+    return redirect(url_for('auth.login'))
 
 @main.route('/plane')
 @login_required

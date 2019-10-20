@@ -1,10 +1,11 @@
 # auth.py
 
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required
 from .models import User
 from . import db
+import requests
 
 auth = Blueprint('auth', __name__)
 
@@ -18,16 +19,22 @@ def login_post():
     password = request.form.get('password')
     remember = True if request.form.get('remember') else False
 
-    user = User.query.filter_by(email=email).first()
+    #parse the result of the API call
+    request_user = requests.get('http://localhost:9000/api/users?email='+email+'&password='+password)
+    result = request_user.json()
+    user_api = result['hydra:member']
 
     # check if user actually exists
     # take the user supplied password, hash it, and compare it to the hashed password in database
-    if not user or not check_password_hash(user.password, password): 
+    if len(user_api) == 0: 
         flash('Please check your login details and try again.')
         return redirect(url_for('auth.login')) # if user doesn't exist or password is wrong, reload the page
 
     # if the above check passes, then we know the user has the right credentials
-    login_user(user, remember=remember)
+    #login_user(user, remember=remember)
+    session['loggedin'] = True
+    session['id'] = user_api[0]['id']
+    session['username'] =user_api[0]['lastName']
     return redirect(url_for('main.index'))
 
 @auth.route('/signup')
@@ -57,7 +64,10 @@ def signup_post():
     return redirect(url_for('auth.login'))
 
 @auth.route('/logout')
-@login_required
 def logout():
+    # Remove session data, this will log the user out
+    session.pop('loggedin', None)
+    session.pop('id', None)
+    session.pop('username', None)
     logout_user()
     return redirect(url_for('main.index'))
