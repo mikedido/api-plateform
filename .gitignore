@@ -7,3 +7,8 @@
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
+
+
+###> python/framework-flask ###
+/admin/__pycache__/
+###< python/framework-flask ###
