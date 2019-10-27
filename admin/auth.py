@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required
 from .models import User
 from . import db
-import requests
+import requests, re
 
 auth = Blueprint('auth', __name__)
 
@@ -34,7 +34,7 @@ def login_post():
     #login_user(user, remember=remember)
     session['loggedin'] = True
     session['id'] = user_api[0]['id']
-    session['username'] =user_api[0]['lastName']
+    session['username'] = user_api[0]['lastName']
     return redirect(url_for('main.index'))
 
 @auth.route('/signup')
@@ -45,23 +45,61 @@ def signup():
 def signup_post():
 
     email = request.form.get('email')
-    name = request.form.get('name')
-    password = request.form.get('password')
+    first_name = request.form.get('firstName')
+    last_name = request.form.get('lastName')
+    password1 = request.form.get('password1')
+    password2 = request.form.get('password2')
 
-    user = User.query.filter_by(email=email).first() # if this returns a user, then the email already exists in database
+    #check email
+    pattern_email = re.compile("^[^\W][a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*\@[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*\.[a-zA-Z]{2,4}$")
+    if not pattern_email.match(email):
+        flash('Email invalide')
+        return redirect(url_for('auth.signup'))
 
-    if user: # if a user is found, we want to redirect back to signup page so user can try again  
+    #check passwords
+    pattern_password = re.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$")
+    if not pattern_password.match(password1) :
+        flash('le mot de passe doit contenir une lettre majuscule ....')
+        return redirect(url_for('auth.signup'))
+
+    if password1 != password2:
+        flash('Les mots de passes doivent être identique')
+        return redirect(url_for('auth.signup'))
+
+    request_user = requests.get('http://localhost:9000/api/users?email='+email)
+    result = request_user.json()
+    user_api = result['hydra:member']
+
+    if len(user_api) > 0: # if a user is found, we want to redirect back to signup page so user can try again  
         flash('Email address already exists')
         return redirect(url_for('auth.signup'))
 
+    #return 'creation compte'
+    data = {
+        "firstName" : first_name,
+        "lastName" : last_name,
+        "email" : email,
+        "password" : password1, 
+        "active" : True,
+        "created_at" : '',
+        "updated_at" : '',
+        "last_connection": ''
+    }
+
+    headers = {
+        'accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json',
+    }
     # create new user with the form data. Hash the password so plaintext version isn't saved.
-    new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'))
-
-    # add the new user to the database
-    db.session.add(new_user)
-    db.session.commit()
-
-    return redirect(url_for('auth.login'))
+    res = requests.post('http://localhost:9000/api/users', json=data, headers=headers)
+    if res.ok:
+        flash('Félicitation votre compte vient d\'été crée!')
+        return redirect(url_for('auth.login'))
+    else:
+        return "error : {}".format(res)
+@auth.route('/forgot_password')
+def forget_password():
+    return render_template('forgot_password.html')
 
 @auth.route('/logout')
 def logout():
