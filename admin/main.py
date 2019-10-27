@@ -11,12 +11,14 @@ def index():
         return render_template('index.html')
     return redirect(url_for('auth.login'))
 
-@main.route('/plane')
-@login_required
+@main.route('/planes')
 def plane():
-    return render_template('plane.html', name=current_user.name)
+    if 'loggedin' in session:
+        return render_template('plane.html', name=session['username'])
+    return redirect(url_for('auth.login'))
 
-@main.route('/flight')
-@login_required
+@main.route('/flights')
 def flight():
-    return render_template('flight.html', name=current_user.name)
+    if 'loggedin' in session:
+        return render_template('flight.html', name=session['username'])
+    return redirect(url_for('auth.login'))
