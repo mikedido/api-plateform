@@ -1,6 +1,6 @@
 # init.py
 
-from flask import Flask
+from flask import Flask, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager 
 
@@ -9,6 +9,11 @@ db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
+
+    #handle 404 not route found
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return redirect(url_for('main.index'))
 
     app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
