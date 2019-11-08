@@ -10,5 +10,5 @@
 
 
 ###> python/framework-flask ###
-/admin/__pycache__/
+/front/__pycache__/
 ###< python/framework-flask ###

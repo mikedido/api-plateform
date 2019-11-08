@@ -97,6 +97,7 @@ def signup_post():
         return redirect(url_for('auth.login'))
     else:
         return "error : {}".format(res)
+        
 @auth.route('/forgot_password')
 def forget_password():
     return render_template('forgot_password.html')
