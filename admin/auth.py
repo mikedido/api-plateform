@@ -91,12 +91,18 @@ def signup_post():
         'Content-Type': 'application/ld+json',
     }
     # create new user with the form data. Hash the password so plaintext version isn't saved.
-    res = requests.post('http://localhost:9000/api/users', json=data, headers=headers)
+    res = requests.post('http://localhost:9000/api/users', headers=headers, json=data)
     if res.ok:
         flash('Félicitation votre compte vient d\'été crée!')
         return redirect(url_for('auth.login'))
     else:
-        return "error : {}".format(res)
+        flash('Une erreur s\'est produite lors de la création du compte')
+        return redirect(url_for('auth.signup'))
+
+@auth.route('/confirm_signup/<token>')
+def confirm_signup(token):
+    return token
+
 @auth.route('/forgot_password')
 def forget_password():
     return render_template('forgot_password.html')

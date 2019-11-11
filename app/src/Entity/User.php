@@ -113,4 +113,16 @@ class User
 
         return $this;
     }
+
+    public function getActive(): ?bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(string $active): self
+    {
+        $this->active = $active;
+
+        return $this;
+    }
 }
