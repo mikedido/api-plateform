@@ -19,6 +19,11 @@ class Plane
     private $id;
 
     /**
+     * 
+     */
+    private $user;
+
+    /**
      * @ORM\Column(type="string", length=255)
      */
     private $name;

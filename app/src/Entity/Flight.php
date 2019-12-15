@@ -62,12 +62,12 @@ class Flight
         return $this;
     }
 
-    public function getLastName(): ?string
+    public function getDuration(): ?string
     {
         return $this->duration;
     }
 
-    public function setLastName(string $duration): self
+    public function setDuration(string $duration): self
     {
         $this->duration = $duration;
 
